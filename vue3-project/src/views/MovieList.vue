@@ -13,17 +13,21 @@
 
 <script lang="ts" setup>
 	import myaxios from "@/http/Myaxios";
-	import { ref } from "vue";
-
+	import { StringLiteral } from "@babel/types";
+	import { ref, reactive } from "vue";
+	import Movie from "@/types/Movie";
 	// 通过泛型，来指定ref代理的对象中存放的数据的数据类型： any[];
-	const movies = ref<any[]>([]);
+	//const movies = ref<any[]>([]);
+
+	const movies = reactive<Movie[]>([]);
 	const loadMovies = function () {
 		// 发送axios请求
 		const url = "https://web.codeboy.com/bmdapi/movie-infos";
-		let params = { page: 2, pagesize: 10 };
+		let params = { page: 1, pagesize: 10 };
 		myaxios.get(url, params).then(res => {
 			console.log(res.data.data.result);
-			movies.value = res.data.data.result;
+			// movies.value = res.data.data.result;
+			movies.push(...res.data.data.result);
 		});
 	};
 </script>
