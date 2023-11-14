@@ -4,10 +4,34 @@
 		<router-view />
 
 		<van-tabbar v-model="active" active-color="#f03d37">
-			<van-tabbar-item icon="home-o">电影</van-tabbar-item>
-			<van-tabbar-item icon="search">视频</van-tabbar-item>
-			<van-tabbar-item icon="friends-o">演出</van-tabbar-item>
-			<van-tabbar-item icon="setting-o">我的</van-tabbar-item>
+			<van-tabbar-item replace to="/home/index">
+				<span>电影</span>
+				<template #icon="props">
+					<img :src="require(`@/assets/tabs/index_${props.active ? 1 : 0}.png`)" alt="" />
+				</template>
+			</van-tabbar-item>
+			<van-tabbar-item replace to="/home/video">
+				<span>视频</span>
+				<template #icon="props">
+					<!-- 好代码，方便阅读 -->
+					<img v-show="!props.active" src="@/assets/tabs/video_0.png" alt="" />
+					<img v-show="props.active" src="@/assets/tabs/video_1.png" alt="" />
+				</template>
+			</van-tabbar-item>
+			<van-tabbar-item replace to="/home/show">
+				<span>演出</span>
+				<template #icon="props">
+					<img :src="require(`@/assets/tabs/show_${props.active ? 1 : 0}.png`)" alt="" />
+				</template>
+			</van-tabbar-item>
+			<van-tabbar-item replace to="/home/me">
+				<span>我的</span>
+
+				<template #icon="props">
+					<img v-show="!props.active" src="@/assets/tabs/me_0.png" alt="" />
+					<img v-show="props.active" src="@/assets/tabs/me_1.png" alt="" />
+				</template>
+			</van-tabbar-item>
 		</van-tabbar>
 	</div>
 </template>

@@ -7,6 +7,34 @@ const routes: Array<RouteRecordRaw> = [
 		name: "home",
 		component: HomeView,
 	},
+
+	{
+		path: "/home",
+		name: "home",
+		component: HomeView,
+		children: [
+			{
+				path: "index",
+				name: "index",
+				component: () => import("../views/index/Index.vue"),
+			},
+			{
+				path: "video",
+				name: "video",
+				component: () => import("../views/video/Video.vue"),
+			},
+			{
+				path: "show",
+				name: "show",
+				component: () => import("../views/show/Show.vue"),
+			},
+			{
+				path: "me",
+				name: "me",
+				component: () => import("../views/me/Me.vue"),
+			},
+		],
+	},
 	{
 		path: "/about",
 		name: "about",
