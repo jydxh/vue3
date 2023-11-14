@@ -10,6 +10,10 @@
 				</van-popover>
 			</template>
 		</van-nav-bar>
+
+		<!--appheader advertisements -->
+		<app-header></app-header>
+
 		<van-empty>首页</van-empty>
 	</div>
 </template>
