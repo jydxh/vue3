@@ -45,6 +45,7 @@
 
 	const tabChange = function (index: string) {
 		router.push(index); // push 实现路由跳转
+		//console.log(router.currentRoute._rawValue.fullPath);
 		active.value = index;
 	};
 </script>
