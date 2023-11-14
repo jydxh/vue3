@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<h1>me page</h1>
+		<van-empty>me page</van-empty>
 	</div>
 </template>
 

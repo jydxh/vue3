@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<h1>show page</h1>
+		<van-empty>show page</van-empty>
 	</div>
 </template>
 

@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<h1>video page</h1>
+		<van-empty>video page</van-empty>
 	</div>
 </template>
 

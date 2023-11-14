@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<h1>index page</h1>
+		<van-empty>首页</van-empty>
 	</div>
 </template>
 
