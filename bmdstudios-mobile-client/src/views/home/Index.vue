@@ -39,15 +39,26 @@
 </template>
 
 <script lang="ts" setup>
-	import { onMounted, ref, reactive } from "vue";
+	import { onMounted, ref, reactive, watch } from "vue";
 	import httpApi from "@/http";
 	import Movie from "@/types/Movie";
 	// 顶部标题栏相关
 	const showPopover = ref(false);
 	const actions = [{ text: "首页" }, { text: "热点" }, { text: "新闻" }];
 
-	// 顶部导航栏
+	// 顶部导航栏选中项的变化，更新列表数组
 	const navActive = ref("1");
+	watch(navActive, newvalue => {
+		console.log("new:", newvalue);
+		let new_value = Number(newvalue);
+		httpApi.movieApi.queryByCategoryId({ cid: new_value, page: 1, pagesize: 20 }).then(res => {
+			// console.log(res);
+			/* 	movies.length = 0; // clear the previous array
+			movies.push(...res.data.data.result); */
+			movies.splice(0, movies.length, ...res.data.data.result);
+			window.scrollTo({ top: 0 });
+		});
+	});
 
 	/* 可以重复调用 */
 	const movies = reactive<Movie[]>([]);
