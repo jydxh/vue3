@@ -33,10 +33,12 @@
 		</van-sticky>
 		<!-- 	<van-empty>首页</van-empty> -->
 		<!-- 电影列表 -->
-		<van-list v-if="movies && movies.length > 0" v-model:loading="loading" :finished="finished" finished-text="no more data" @load="onLoad">
-			<movieItem v-for="item in movies" :key="item.id" :movie="item" class="movieItem"></movieItem>
-		</van-list>
-		<van-empty>暂无数据</van-empty>
+		<van-pull-refresh v-model="refreshing" @refresh="onPullRefresh" success-text="loading successful">
+			<van-list v-if="movies && movies.length > 0" v-model:loading="loading" :finished="finished" finished-text="no more data" @load="onLoad">
+				<movieItem v-for="item in movies" :key="item.id" :movie="item" class="movieItem"></movieItem>
+			</van-list>
+			<van-empty v-else>暂无数据</van-empty>
+		</van-pull-refresh>
 		<div style="height: 50px"></div>
 	</div>
 </template>
@@ -53,16 +55,27 @@
 	const navActive = ref("1");
 
 	watch(navActive, newvalue => {
-		console.log("new:", newvalue);
+		//console.log("new:", newvalue);
 		let new_value = Number(newvalue);
-		navActive.value = newvalue;
-		httpApi.movieApi.queryByCategoryId({ cid: new_value, page: page.value, pagesize: 20 }).then(res => {
-			// console.log(res);
-			/* 	movies.length = 0; // clear the previous array
+		finished.value = false;
+		window.scrollTo({ top: 0 });
+		let str = localStorage.getItem(newvalue);
+		if (str != null) {
+			let data: Movie[] = JSON.parse(str);
+			movies.splice(0, movies.length, ...data);
+			return;
+		} else {
+			httpApi.movieApi.queryByCategoryId({ cid: new_value, page: page.value, pagesize: 20 }).then(res => {
+				// console.log(res);
+				/* 	movies.length = 0; // clear the previous array
 			movies.push(...res.data.data.result); */
-			movies.splice(0, movies.length, ...res.data.data.result);
-			window.scrollTo({ top: 0 });
-		});
+				movies.splice(0, movies.length, ...res.data.data.result);
+
+				// 处理客户端缓存，将下载的data存到LocalStorage
+				let value = JSON.stringify(res.data.data.result);
+				localStorage.setItem(newvalue, value);
+			});
+		}
 	});
 	/* 处理列表的触底加载 */
 	const loading = ref(false);
@@ -96,6 +109,22 @@
 			page.value = res.data.data.page;
 		});
 	});
+
+	//处理列表的下拉刷新
+	const refreshing = ref(false);
+	const onPullRefresh = function () {
+		console.log("下拉刷新。。。");
+		// 加载当前类别下的首页数据，替换当前列表 更新缓存
+		let params = { cid: parseInt(navActive.value), page: 1, pagesize: 20 };
+		httpApi.movieApi.queryByCategoryId(params).then(res => {
+			console.log(res);
+			movies.splice(0, movies.length, ...res.data.data.result);
+			finished.value = false;
+			refreshing.value = false;
+			// 更新缓存
+			localStorage.setItem(navActive.value, JSON.stringify(movies));
+		});
+	};
 </script>
 <style lang="scss" scoped>
 	.wrapper {
