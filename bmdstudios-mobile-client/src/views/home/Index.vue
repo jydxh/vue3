@@ -33,7 +33,10 @@
 		</van-sticky>
 		<!-- 	<van-empty>首页</van-empty> -->
 		<!-- 电影列表 -->
-		<movieItem v-for="item in movies" :key="item.id" :movie="item" class="movieItem"></movieItem>
+		<van-list v-if="movies && movies.length > 0" v-model:loading="loading" :finished="finished" finished-text="no more data" @load="onLoad">
+			<movieItem v-for="item in movies" :key="item.id" :movie="item" class="movieItem"></movieItem>
+		</van-list>
+		<van-empty>暂无数据</van-empty>
 		<div style="height: 50px"></div>
 	</div>
 </template>
@@ -48,10 +51,12 @@
 
 	// 顶部导航栏选中项的变化，更新列表数组
 	const navActive = ref("1");
+
 	watch(navActive, newvalue => {
 		console.log("new:", newvalue);
 		let new_value = Number(newvalue);
-		httpApi.movieApi.queryByCategoryId({ cid: new_value, page: 1, pagesize: 20 }).then(res => {
+		navActive.value = newvalue;
+		httpApi.movieApi.queryByCategoryId({ cid: new_value, page: page.value, pagesize: 20 }).then(res => {
 			// console.log(res);
 			/* 	movies.length = 0; // clear the previous array
 			movies.push(...res.data.data.result); */
@@ -59,15 +64,36 @@
 			window.scrollTo({ top: 0 });
 		});
 	});
+	/* 处理列表的触底加载 */
+	const loading = ref(false);
+	const finished = ref(false);
+	// 触底后执行onLoad
+
+	const onLoad = function () {
+		let cid = parseInt(navActive.value);
+		let page = Math.floor(movies.length / 20) + 1;
+		let params = { cid, page, pagesize: 20 };
+		httpApi.movieApi.queryByCategoryId(params).then(res => {
+			console.log(`第${page}页`, res);
+			movies.push(...res.data.data.result);
+			loading.value = false; // 关闭正在加载中的状态 开锁
+			if (movies.length == res.data.data.total) {
+				// 如果数组长度和数据total长度一样 说明加载到底了 就可以把finish.value 改为true, 防止继续加载
+				finished.value = true;
+			}
+		});
+	};
 
 	/* 可以重复调用 */
 	const movies = reactive<Movie[]>([]);
+	const page = ref(1);
 	onMounted(() => {
 		/* axios 请求数据 */
-		httpApi.movieApi.queryByCategoryId({ cid: 1, page: 1, pagesize: 20 }).then(res => {
+		httpApi.movieApi.queryByCategoryId({ cid: 1, page: page.value, pagesize: 20 }).then(res => {
 			console.log(res);
 			//将res.data.data.result 中的数组交给template渲染
 			movies.push(...res.data.data.result);
+			page.value = res.data.data.page;
 		});
 	});
 </script>
