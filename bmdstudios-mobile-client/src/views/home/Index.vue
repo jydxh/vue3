@@ -35,7 +35,7 @@
 		<!-- 电影列表 -->
 		<van-pull-refresh v-model="refreshing" @refresh="onPullRefresh" success-text="loading successful">
 			<van-list v-if="movies && movies.length > 0" v-model:loading="loading" :finished="finished" finished-text="no more data" @load="onLoad">
-				<movieItem v-for="item in movies" :key="item.id" :movie="item" class="movieItem"></movieItem>
+				<movieItem @click.native="router.push(`/detail/${item.id}`)" v-for="item in movies" :key="item.id" :movie="item" class="movieItem"></movieItem>
 			</van-list>
 			<van-empty v-else>暂无数据</van-empty>
 		</van-pull-refresh>
@@ -47,6 +47,8 @@
 	import { onMounted, ref, reactive, watch } from "vue";
 	import httpApi from "@/http";
 	import Movie from "@/types/Movie";
+	import { useRouter } from "vue-router";
+	const router = useRouter(); //获取路由管理器
 	// 顶部标题栏相关
 	const showPopover = ref(false);
 	const actions = [{ text: "首页" }, { text: "热点" }, { text: "新闻" }];
