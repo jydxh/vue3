@@ -1,7 +1,12 @@
 <template>
 	<div>
 		<!-- 二级路由占位符 -->
-		<router-view />
+
+		<router-view v-slot="{ Component }">
+			<keep-alive>
+				<component :is="Component"></component>
+			</keep-alive>
+		</router-view>
 
 		<van-tabbar v-model="active" active-color="#f03d37" @change="tabChange">
 			<van-tabbar-item name="/home/index">

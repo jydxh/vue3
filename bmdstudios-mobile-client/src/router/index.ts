@@ -16,6 +16,9 @@ const routes: Array<RouteRecordRaw> = [
 				path: "index",
 				name: "home",
 				component: () => import("../views/home/Index.vue"),
+				meta: {
+					keepAlive: true, // 自定义的meta属性 表示该路由需要报活
+				},
 			},
 			{
 				path: "video",
@@ -38,6 +41,11 @@ const routes: Array<RouteRecordRaw> = [
 		path: "/detail/:id",
 		name: "detail",
 		component: () => import("../views/home/MovieDetail.vue"),
+	},
+	{
+		path: "/cinema-selection/:id",
+		name: "cinema-selection",
+		component: () => import("../views/home/CinemaSelection.vue"),
 	},
 ];
 
